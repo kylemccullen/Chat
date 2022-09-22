@@ -2,22 +2,33 @@
   <h2>Chat App</h2>
 
   <div class="form-group">
-    <label for="name">Name: </label>
     <input
       id="name"
       class="form-control"
       [(ngModel)]="name"
-      placeholder="Name"
+      placeholder="username"
+      [class.is-invalid]="isNameInvalid"
     />
   </div>
 
-  <div *ngIf="loading">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
+  <div class="flex-fill my-4" style="overflow-y: scroll">
+    <div *ngIf="loading">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
-  </div>
 
-  <div class="flex-fill py-4">
+    <div *ngIf="failed">
+      <div class="alert alert-danger" role="alert">Loading Chat Failed.</div>
+    </div>
+
+    <div
+      *ngIf="!loading && !failed && messages.length == 0"
+      class="text-secondary"
+    >
+      No chat yet, be the first to send one!
+    </div>
+
     <div *ngFor="let message of messages">
       <p>
         <span class="pe-2 fw-bold" [style.color]="message.color"
@@ -39,7 +50,11 @@
     </div>
 
     <div class="ps-3">
-      <button class="btn btn-success" (click)="onSend()" [disabled]="loading">
+      <button
+        class="btn btn-success"
+        (click)="onSend()"
+        [disabled]="loading || failed"
+      >
         Send
       </button>
     </div>

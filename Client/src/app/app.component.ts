@@ -13,6 +13,8 @@ export class AppComponent {
   content: string = '';
   messages: Message[] = [];
   loading: boolean = true;
+  failed: boolean = false;
+  isNameInvalid: boolean = false;
 
   connection = new HubConnectionBuilder()
     .withUrl('https://localhost:7265/hub/message')
@@ -21,9 +23,15 @@ export class AppComponent {
   constructor(private messagesService: MessagesService) {}
 
   ngOnInit() {
-    this.messagesService.get().subscribe((messages: Message[]) => {
-      this.messages = messages;
-      this.loading = false;
+    this.messagesService.get().subscribe({
+      next: (messages: Message[]) => {
+        this.messages = messages;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.failed = true;
+      },
     });
 
     this.connection
@@ -37,6 +45,13 @@ export class AppComponent {
   }
 
   onSend() {
+    if (this.name.length == 0) {
+      this.isNameInvalid = true;
+      return;
+    }
+
+    this.isNameInvalid = false;
+
     let newMessage: Message = {
       name: this.name,
       content: this.content,

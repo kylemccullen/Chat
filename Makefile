@@ -1,5 +1,5 @@
 api:
 	dotnet watch run
 
-client:
-	ng serve --open
+ng:
+	npm start --prefix Client
